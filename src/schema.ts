@@ -3,7 +3,7 @@
  * https://jazz.tools/docs/react/schemas/covalues
  */
 
-import { Account, CoMap, Group, Profile, co } from "jazz-tools";
+import { Account, CoMap, Group, Profile, co, FileStream, CoList } from "jazz-tools";
 
 /** The account profile is an app-specific per-user public `CoMap`
  *  where you can store top-level objects for that user */
@@ -17,11 +17,18 @@ export class JazzProfile extends Profile {
   // Add public fields here
 }
 
+export class VoiceMessage extends CoMap {
+  audio = co.ref(FileStream);
+  createdAt = co.Date;
+  // Add more fields as needed (e.g., transcription, expiresAt, listensLeft)
+}
+
+export class VoiceMessageList extends CoList.Of(co.ref(VoiceMessage)) {}
+
 /** The account root is an app-specific per-user private `CoMap`
  *  where you can store top-level objects for that user */
 export class AccountRoot extends CoMap {
   dateOfBirth = co.Date;
-
   // Add private fields here
 
   get age() {
