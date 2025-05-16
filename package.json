@@ -13,6 +13,7 @@
     "format-and-lint:fix": "biome check . --write"
   },
   "dependencies": {
+    "@tailwindcss/vite": "^4.1.7",
     "jazz-inspector": "^0.13.30",
     "jazz-react": "^0.13.30",
     "jazz-tools": "^0.13.30",
@@ -23,6 +24,7 @@
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
     "@playwright/test": "^1.50.1",
+    "@types/node": "^22.15.18",
     "@types/react": "~18.3.12",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^4.3.3",
@@ -30,7 +32,7 @@
     "globals": "^15.11.0",
     "is-ci": "^3.0.1",
     "postcss": "^8.4.27",
-    "tailwindcss": "^3.4.17",
+    "tailwindcss": "^4.1.7",
     "typescript": "~5.6.2",
     "vite": "^6.0.11"
   }
