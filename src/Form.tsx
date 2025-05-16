@@ -15,7 +15,7 @@ export function Form() {
   if (!me) return null;
 
   return (
-    <Card className="max-w-md mx-auto">
+    <Card className="max-w-md w-full mx-auto">
       <CardHeader>
         <CardTitle>Profile</CardTitle>
       </CardHeader>
@@ -28,6 +28,16 @@ export function Form() {
             placeholder="Enter your first name here..."
             value={me.profile.firstName || ""}
             onChange={(e) => (me.profile.firstName = e.target.value)}
+          />
+        </div>
+        <div className="flex flex-col gap-2">
+          <Label htmlFor="name">Name</Label>
+          <Input
+            type="text"
+            id="name"
+            placeholder="Enter your name here..."
+            value={me.profile.name || ""}
+            onChange={(e) => (me.profile.name = e.target.value)}
           />
         </div>
         <div className="flex flex-col gap-2">
