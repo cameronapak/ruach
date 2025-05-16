@@ -1,6 +1,5 @@
 import React, { useState, useRef } from "react";
-import { useAccount, useCoState } from "jazz-react";
-import { ID, FileStream } from "jazz-tools";
+import { ID, FileStream, Group } from "jazz-tools";
 import { VoiceMessage } from "../schema";
 
 const VoiceRecorder: React.FC<{ chatID?: ID<VoiceMessage> }> = (props) => {
@@ -12,8 +11,6 @@ const VoiceRecorder: React.FC<{ chatID?: ID<VoiceMessage> }> = (props) => {
   const [messageId, setMessageId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const audioChunks = useRef<Blob[]>([]);
-  const voiceMessages = useCoState(VoiceMessage, props.chatID, { resolve: { audio: true } });
-  const { me } = useAccount();
 
   const startRecording = async () => {
     setError(null);
@@ -55,18 +52,23 @@ const VoiceRecorder: React.FC<{ chatID?: ID<VoiceMessage> }> = (props) => {
     setProgress(0);
     setError(null);
     try {
+      // Create a public group for this message
+      const publicGroup = Group.create();
+      publicGroup.addMember("everyone", "reader");
+
       const response = await fetch(audioURL);
       const blob = await response.blob();
-      // Create a FileStream from the blob with progress
+      // FileStream owned by the public group
       const fileStream = await FileStream.createFromBlob(blob, {
-        owner: me,
+        owner: publicGroup,
         onProgress: (p: number) => setProgress(Math.round(p * 100)),
       });
       await fileStream.waitForSync();
+      // VoiceMessage owned by the public group
       const message = VoiceMessage.create({
         audio: fileStream,
         createdAt: new Date(),
-      }, { owner: me });
+      }, { owner: publicGroup });
       setMessageId(message.id);
     } catch (err) {
       setError("Upload failed. Please try again.");
