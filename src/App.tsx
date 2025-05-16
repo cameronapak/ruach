@@ -1,24 +1,24 @@
-import { useAccount, useIsAuthenticated } from "jazz-react";
 import { AuthButton } from "./AuthButton.tsx";
 import { Form } from "./Form.tsx";
-import { Logo } from "./Logo.tsx";
 import VoiceRecorder from "./components/VoiceRecorder";
 import VoiceMessagePlayer from "./components/VoiceMessagePlayer";
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import MyVoiceMessages from "./MyVoiceMessages";
+import { Button } from "./components/ui/button.tsx";
 
 function App() {
-  const { me } = useAccount({ resolve: { profile: true, root: true } });
-
-  const isAuthenticated = useIsAuthenticated();
 
   return (
     <BrowserRouter>
       <header>
-        <nav className="container flex justify-between items-center py-3">
-          <div className="flex gap-4 items-center">
-            <Link to="/">Home</Link>
-            <Link to="/account">Account</Link>
+        <nav className="container max-w-lg mx-auto flex justify-between items-center py-3">
+          <div className="flex items-center">
+            <Link to="/">
+              <Button variant="ghost">Home</Button>
+            </Link>
+            <Link to="/account">
+              <Button variant="ghost">Account</Button>
+            </Link>
           </div>
           <AuthButton />
         </nav>
