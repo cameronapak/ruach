@@ -4,7 +4,7 @@ import { Form } from "./Form.tsx";
 import { Logo } from "./Logo.tsx";
 import VoiceRecorder from "./components/VoiceRecorder";
 import VoiceMessagePlayer from "./components/VoiceMessagePlayer";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 
 function App() {
   const { me } = useAccount({ resolve: { profile: true, root: true } });
@@ -24,7 +24,9 @@ function App() {
         </nav>
       </header>
       <main className="container mt-16 flex flex-col gap-8">
-        <Logo />
+        <Link to="/">
+          <Logo />
+        </Link>
 
         <Routes>
           <Route

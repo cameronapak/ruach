@@ -1,6 +1,7 @@
 import React, { useState, useRef } from "react";
 import { ID, FileStream, Group } from "jazz-tools";
 import { VoiceMessage } from "../schema";
+import { useNavigate } from "react-router-dom";
 
 const VoiceRecorder: React.FC<{ chatID?: ID<VoiceMessage> }> = (props) => {
   const [recording, setRecording] = useState(false);
@@ -11,6 +12,7 @@ const VoiceRecorder: React.FC<{ chatID?: ID<VoiceMessage> }> = (props) => {
   const [messageId, setMessageId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const audioChunks = useRef<Blob[]>([]);
+  const navigate = useNavigate();
 
   const startRecording = async () => {
     setError(null);
@@ -69,6 +71,7 @@ const VoiceRecorder: React.FC<{ chatID?: ID<VoiceMessage> }> = (props) => {
         audio: fileStream,
         createdAt: new Date(),
       }, { owner: publicGroup });
+      navigate(`/message/${message.id}`);
       setMessageId(message.id);
     } catch (err) {
       setError("Upload failed. Please try again.");
