@@ -25,7 +25,7 @@ const VoiceRecorder: React.FC<{ chatID?: ID<VoiceMessage> }> = (props) => {
   const [error, setError] = useState<string | null>(null);
   const audioChunks = useRef<Blob[]>([]);
   const navigate = useNavigate();
-  const { me } = useAccount({ resolve: { profile: true, root: true } });
+  const { me } = useAccount({ resolve: { profile: true } });
 
   const startRecording = async () => {
     setError(null);
@@ -66,6 +66,16 @@ const VoiceRecorder: React.FC<{ chatID?: ID<VoiceMessage> }> = (props) => {
     setUploading(true);
     setProgress(0);
     setError(null);
+    if (!me?.profile) {
+      setError("You must be logged in to create a voice message.");
+      setUploading(false);
+      return;
+    }
+    if (!me.profile.messages) {
+      setError("Your profile is missing a messages list.");
+      setUploading(false);
+      return;
+    }
     try {
       // Create a public group for this message
       const publicGroup = Group.create();
@@ -83,8 +93,9 @@ const VoiceRecorder: React.FC<{ chatID?: ID<VoiceMessage> }> = (props) => {
       const message = VoiceMessage.create({
         audio: fileStream,
         createdAt: new Date(),
-        creator: me?.profile,
+        creator: me.profile,
       }, { owner: publicGroup });
+      me.profile.messages.push(message);
       navigate(`/message/${message.id}`);
       setMessageId(message.id);
     } catch (err) {
@@ -93,6 +104,20 @@ const VoiceRecorder: React.FC<{ chatID?: ID<VoiceMessage> }> = (props) => {
       setUploading(false);
     }
   };
+
+  if (!me?.profile) {
+    return (
+      <Card className="max-w-md w-full mx-auto">
+        <CardHeader>
+          <CardTitle>Voice Recorder</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-center text-muted-foreground">You must be logged in to record a voice message.</div>
+        </CardContent>
+        <CardFooter />
+      </Card>
+    );
+  }
 
   return (
     <Card className="max-w-md w-full mx-auto">

@@ -5,6 +5,7 @@ import { Logo } from "./Logo.tsx";
 import VoiceRecorder from "./components/VoiceRecorder";
 import VoiceMessagePlayer from "./components/VoiceMessagePlayer";
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import MyVoiceMessages from "./MyVoiceMessages";
 
 function App() {
   const { me } = useAccount({ resolve: { profile: true, root: true } });
@@ -15,6 +16,10 @@ function App() {
     <BrowserRouter>
       <header>
         <nav className="container flex justify-between items-center py-3">
+          <div className="flex gap-4 items-center">
+            <Link to="/">Home</Link>
+            <Link to="/my-messages">My Messages</Link>
+          </div>
           {isAuthenticated ? (
             <span>You're logged in.</span>
           ) : (
@@ -47,6 +52,7 @@ function App() {
             }
           />
           <Route path="/message/:id" element={<VoiceMessagePlayer />} />
+          <Route path="/my-messages" element={<MyVoiceMessages />} />
         </Routes>
       </main>
     </BrowserRouter>

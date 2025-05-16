@@ -13,6 +13,7 @@ export class JazzProfile extends Profile {
    * https://jazz.tools/docs/react/schemas/covalues#covalue-fielditem-types
    */
   firstName = co.string;
+  messages = co.ref(VoiceMessageList);
 
   // Add public fields here
 }
@@ -20,7 +21,7 @@ export class JazzProfile extends Profile {
 export class VoiceMessage extends CoMap {
   audio = co.ref(FileStream);
   createdAt = co.Date;
-  creator = co.ref(JazzProfile, { optional: true });
+  creator = co.ref(JazzProfile);
   // Add more fields as needed (e.g., transcription, expiresAt, listensLeft)
 }
 
@@ -58,6 +59,11 @@ export class JazzAccount extends Account {
       );
     }
 
+    if (this.profile && this.profile.messages === undefined) {
+      const group = Group.create();
+      this.profile.messages = VoiceMessageList.create([], group);
+    }
+
     if (this.profile === undefined) {
       const group = Group.create();
       group.addMember("everyone", "reader"); // The profile info is visible to everyone
@@ -66,6 +72,7 @@ export class JazzAccount extends Account {
         {
           name: "Anonymous user",
           firstName: "",
+          messages: VoiceMessageList.create([], group),
         },
         group,
       );
