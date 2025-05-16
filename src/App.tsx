@@ -41,7 +41,7 @@ function App() {
   return (
     <BrowserRouter>
       <Header />
-      <main className="container py-12 flex flex-col gap-8">
+      <main className="container max-w-lg mx-auto py-12 flex flex-col gap-8">
         <Routes>
           <Route
             path="/"

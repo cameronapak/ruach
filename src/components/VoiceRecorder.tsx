@@ -119,7 +119,7 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
   };
 
   return (
-    <section className="max-w-md w-full mx-auto">
+    <section className="w-full">
       {!recording && !audioURL && (
         <Button size="lg" onClick={startRecording} className="w-full">
           <svg
