@@ -12,6 +12,8 @@ import {
 } from "./ui/card";
 import { Alert, AlertTitle, AlertDescription } from "./ui/alert";
 import { Skeleton } from "./ui/skeleton";
+import VoiceRecorder from "./VoiceRecorder";
+import { Button } from "./ui/button";
 
 const VoiceMessagePlayer: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -19,6 +21,7 @@ const VoiceMessagePlayer: React.FC = () => {
   const [audioURL, setAudioURL] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showRecorder, setShowRecorder] = useState(false);
 
   useEffect(() => {
     const fetchAudio = async () => {
@@ -66,6 +69,25 @@ const VoiceMessagePlayer: React.FC = () => {
         )}
         {!loading && !error && !audioURL && (
           <div className="text-muted-foreground">No audio available.</div>
+        )}
+        {!showRecorder && !loading && !error && (
+          <Button
+            className="mt-4"
+            onClick={() => setShowRecorder(true)}
+          >
+            Record a Response
+          </Button>
+        )}
+        {showRecorder && (
+          <div className="w-full flex flex-col gap-4 mt-4">
+            <VoiceRecorder />
+            <Button
+              variant="secondary"
+              onClick={() => setShowRecorder(false)}
+            >
+              Cancel
+            </Button>
+          </div>
         )}
       </CardContent>
       <CardFooter />

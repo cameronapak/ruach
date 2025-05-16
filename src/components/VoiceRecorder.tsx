@@ -92,7 +92,7 @@ const VoiceRecorder: React.FC<{ chatID?: ID<VoiceMessage> }> = (props) => {
   };
 
   return (
-    <Card className="max-w-md mx-auto">
+    <Card className="max-w-md w-full mx-auto">
       <CardHeader>
         <CardTitle>Voice Recorder</CardTitle>
       </CardHeader>
