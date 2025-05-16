@@ -20,6 +20,7 @@ export class JazzProfile extends Profile {
 export class VoiceMessage extends CoMap {
   audio = co.ref(FileStream);
   createdAt = co.Date;
+  creator = co.ref(JazzProfile, { optional: true });
   // Add more fields as needed (e.g., transcription, expiresAt, listensLeft)
 }
 

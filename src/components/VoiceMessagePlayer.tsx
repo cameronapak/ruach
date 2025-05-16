@@ -9,6 +9,7 @@ import {
   CardTitle,
   CardContent,
   CardFooter,
+  CardDescription,
 } from "./ui/card";
 import { Alert, AlertTitle, AlertDescription } from "./ui/alert";
 import { Skeleton } from "./ui/skeleton";
@@ -50,6 +51,9 @@ const VoiceMessagePlayer: React.FC = () => {
     <Card className="max-w-md w-full mx-auto mt-8">
       <CardHeader>
         <CardTitle>Voice Message</CardTitle>
+        <CardDescription>
+          from {message?.creator?.firstName || "Anonymous"}
+        </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col items-center gap-4">
         {loading && (

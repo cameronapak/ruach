@@ -13,6 +13,7 @@ import { Button } from "./ui/button";
 import { Progress } from "./ui/progress";
 import { Alert, AlertTitle, AlertDescription } from "./ui/alert";
 import { Badge } from "./ui/badge";
+import { useAccount } from "jazz-react";
 
 const VoiceRecorder: React.FC<{ chatID?: ID<VoiceMessage> }> = (props) => {
   const [recording, setRecording] = useState(false);
@@ -24,6 +25,7 @@ const VoiceRecorder: React.FC<{ chatID?: ID<VoiceMessage> }> = (props) => {
   const [error, setError] = useState<string | null>(null);
   const audioChunks = useRef<Blob[]>([]);
   const navigate = useNavigate();
+  const { me } = useAccount({ resolve: { profile: true, root: true } });
 
   const startRecording = async () => {
     setError(null);
@@ -81,6 +83,7 @@ const VoiceRecorder: React.FC<{ chatID?: ID<VoiceMessage> }> = (props) => {
       const message = VoiceMessage.create({
         audio: fileStream,
         createdAt: new Date(),
+        creator: me?.profile,
       }, { owner: publicGroup });
       navigate(`/message/${message.id}`);
       setMessageId(message.id);
