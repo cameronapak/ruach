@@ -15,7 +15,15 @@ import { Alert, AlertTitle, AlertDescription } from "./ui/alert";
 import { Badge } from "./ui/badge";
 import { useAccount } from "jazz-react";
 
-const VoiceRecorder: React.FC<{ chatID?: ID<VoiceMessage> }> = (props) => {
+type VoiceRecorderProps = {
+  isResponse?: boolean;
+  chatID?: ID<VoiceMessage>;
+  onUploaded?: (messageId: string) => void;
+};
+
+const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
+  isResponse = false
+}) => {
   const [recording, setRecording] = useState(false);
   const [audioURL, setAudioURL] = useState<string | null>(null);
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
@@ -140,7 +148,7 @@ const VoiceRecorder: React.FC<{ chatID?: ID<VoiceMessage> }> = (props) => {
               fill="currentColor"
             ></path>
           </svg>
-          Record
+          {isResponse ? "Record a Response" : "Record"}
         </Button>
       )}
       {recording && (
