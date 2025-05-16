@@ -62,7 +62,7 @@ const VoiceMessagePlayer: React.FC = () => {
           </Alert>
         )}
         {!loading && !error && audioURL && (
-          <audio src={audioURL} controls autoPlay className="w-full" />
+          <audio src={audioURL} controls className="w-full" />
         )}
         {!loading && !error && !audioURL && (
           <div className="text-muted-foreground">No audio available.</div>
