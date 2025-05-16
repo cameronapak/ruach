@@ -2,6 +2,17 @@ import React, { useState, useRef } from "react";
 import { ID, FileStream, Group } from "jazz-tools";
 import { VoiceMessage } from "../schema";
 import { useNavigate } from "react-router-dom";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardFooter,
+} from "./ui/card";
+import { Button } from "./ui/button";
+import { Progress } from "./ui/progress";
+import { Alert, AlertTitle, AlertDescription } from "./ui/alert";
+import { Badge } from "./ui/badge";
 
 const VoiceRecorder: React.FC<{ chatID?: ID<VoiceMessage> }> = (props) => {
   const [recording, setRecording] = useState(false);
@@ -81,34 +92,52 @@ const VoiceRecorder: React.FC<{ chatID?: ID<VoiceMessage> }> = (props) => {
   };
 
   return (
-    <div>
-      {!recording && !audioURL && (
-        <button onClick={startRecording}>Record</button>
-      )}
-      {recording && (
-        <button onClick={stopRecording}>Stop</button>
-      )}
-      {audioURL && !recording && (
-        <>
-          <audio src={audioURL} controls />
-          <button onClick={resetRecording} disabled={uploading}>Re-record</button>
-          <button onClick={uploadVoiceMessage} disabled={uploading}>
-            {uploading ? "Uploading..." : "Save & Share"}
-          </button>
-          {uploading && <div>Uploading: {progress}%</div>}
-        </>
-      )}
-      {messageId && (
-        <div>
-          <p>Voice message uploaded!</p>
-          <p>Message ID: <code>{messageId}</code></p>
-          <p>
-            Shareable link: <a href={`/message/${messageId}`}>{window.location.origin}/message/{messageId}</a>
-          </p>
-        </div>
-      )}
-      {error && <div style={{ color: 'red' }}>{error}</div>}
-    </div>
+    <Card className="max-w-md mx-auto">
+      <CardHeader>
+        <CardTitle>Voice Recorder</CardTitle>
+      </CardHeader>
+      <CardContent className="flex flex-col gap-4">
+        {!recording && !audioURL && (
+          <Button onClick={startRecording} className="w-full">Record</Button>
+        )}
+        {recording && (
+          <Button onClick={stopRecording} variant="destructive" className="w-full">Stop</Button>
+        )}
+        {audioURL && !recording && (
+          <div className="flex flex-col gap-3 items-center">
+            <audio src={audioURL} controls className="w-full" />
+            <div className="flex gap-2 w-full">
+              <Button onClick={resetRecording} disabled={uploading} variant="secondary" className="flex-1">Re-record</Button>
+              <Button onClick={uploadVoiceMessage} disabled={uploading} className="flex-1">
+                {uploading ? "Uploading..." : "Save & Share"}
+              </Button>
+            </div>
+            {uploading && (
+              <div className="w-full mt-2">
+                <Progress value={progress} />
+                <div className="text-xs text-muted-foreground mt-1 text-center">Uploading: {progress}%</div>
+              </div>
+            )}
+          </div>
+        )}
+        {messageId && (
+          <div className="flex flex-col gap-2 items-center mt-2">
+            <Badge variant="secondary">Voice message uploaded!</Badge>
+            <div className="text-xs">Message ID: <Badge variant="outline">{messageId}</Badge></div>
+            <div className="text-xs break-all">
+              Shareable link: <a href={`/message/${messageId}`} className="underline text-primary">{window.location.origin}/message/{messageId}</a>
+            </div>
+          </div>
+        )}
+        {error && (
+          <Alert variant="destructive" className="mt-2">
+            <AlertTitle>Error</AlertTitle>
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
+      </CardContent>
+      <CardFooter />
+    </Card>
   );
 };
 

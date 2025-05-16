@@ -1,4 +1,13 @@
 import { useAccount } from "jazz-react";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardFooter,
+} from "./components/ui/card";
+import { Label } from "./components/ui/label";
+import { Input } from "./components/ui/input";
 
 export function Form() {
   const { me } = useAccount({ resolve: { profile: true, root: true } });
@@ -6,35 +15,33 @@ export function Form() {
   if (!me) return null;
 
   return (
-    <div className="grid gap-4 border p-8">
-      <div className="flex items-center gap-3">
-        <label htmlFor="firstName" className="sm:w-32">
-          First name
-        </label>
-        <input
-          type="text"
-          id="firstName"
-          placeholder="Enter your first name here..."
-          className="border border-stone-300 rounded shadow-sm py-1 px-2 flex-1"
-          value={me.profile.firstName || ""}
-          onChange={(e) => (me.profile.firstName = e.target.value)}
-        />
-      </div>
-
-      <div className="flex items-center gap-3">
-        <label htmlFor="dateOfBirth" className="sm:w-32">
-          Date of birth
-        </label>
-        <input
-          type="date"
-          id="dateOfBirth"
-          className="border border-stone-300 rounded shadow-sm py-1 px-2 flex-1"
-          value={me.root.dateOfBirth?.toISOString().split("T")[0] || ""}
-          onChange={(e) => (me.root.dateOfBirth = new Date(e.target.value))}
-        />
-      </div>
-
-      {/*Add more fields here*/}
-    </div>
+    <Card className="max-w-md mx-auto">
+      <CardHeader>
+        <CardTitle>Profile</CardTitle>
+      </CardHeader>
+      <CardContent className="flex flex-col gap-4">
+        <div className="flex flex-col gap-2">
+          <Label htmlFor="firstName">First name</Label>
+          <Input
+            type="text"
+            id="firstName"
+            placeholder="Enter your first name here..."
+            value={me.profile.firstName || ""}
+            onChange={(e) => (me.profile.firstName = e.target.value)}
+          />
+        </div>
+        <div className="flex flex-col gap-2">
+          <Label htmlFor="dateOfBirth">Date of birth</Label>
+          <Input
+            type="date"
+            id="dateOfBirth"
+            value={me.root.dateOfBirth?.toISOString().split("T")[0] || ""}
+            onChange={(e) => (me.root.dateOfBirth = new Date(e.target.value))}
+          />
+        </div>
+        {/*Add more fields here*/}
+      </CardContent>
+      <CardFooter />
+    </Card>
   );
 }

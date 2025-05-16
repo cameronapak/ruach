@@ -3,6 +3,15 @@ import { useParams } from "react-router-dom";
 import { useCoState } from "jazz-react";
 import { VoiceMessage } from "../schema";
 import { ID } from "jazz-tools";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardFooter,
+} from "./ui/card";
+import { Alert, AlertTitle, AlertDescription } from "./ui/alert";
+import { Skeleton } from "./ui/skeleton";
 
 const VoiceMessagePlayer: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -34,15 +43,33 @@ const VoiceMessagePlayer: React.FC = () => {
     if (message) fetchAudio();
   }, [message]);
 
-  if (loading) return <div>Loading voice message...</div>;
-  if (error) return <div style={{ color: 'red' }}>{error}</div>;
-  if (!audioURL) return <div>No audio available.</div>;
-
   return (
-    <div>
-      <h2>Voice Message</h2>
-      <audio src={audioURL} controls autoPlay />
-    </div>
+    <Card className="max-w-md w-full mx-auto mt-8">
+      <CardHeader>
+        <CardTitle>Voice Message</CardTitle>
+      </CardHeader>
+      <CardContent className="flex flex-col items-center gap-4">
+        {loading && (
+          <div className="w-full flex flex-col items-center gap-2">
+            <Skeleton className="w-full h-12" />
+            <div className="text-muted-foreground text-xs">Loading voice message...</div>
+          </div>
+        )}
+        {error && (
+          <Alert variant="destructive" className="w-full">
+            <AlertTitle>Error</AlertTitle>
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
+        {!loading && !error && audioURL && (
+          <audio src={audioURL} controls autoPlay className="w-full" />
+        )}
+        {!loading && !error && !audioURL && (
+          <div className="text-muted-foreground">No audio available.</div>
+        )}
+      </CardContent>
+      <CardFooter />
+    </Card>
   );
 };
 
