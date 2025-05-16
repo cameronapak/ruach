@@ -145,6 +145,7 @@ const VoiceRecorder: React.FC<{ chatID?: ID<VoiceMessage> }> = (props) => {
       )}
       {recording && (
         <Button
+          size="lg"
           onClick={stopRecording}
           variant="destructive"
           className="w-full"
