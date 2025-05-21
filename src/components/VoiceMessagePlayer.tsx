@@ -202,10 +202,16 @@ const VoiceMessagePlayer: React.FC = () => {
               </Alert>
             )}
             {message?.transcription && (
-              <div className="w-full mt-2 p-4 border rounded-sm bg-secondary">
+              <motion.div 
+                className="w-full mt-2 p-4 border rounded-sm bg-secondary overflow-hidden"
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+              >
                 <h3 className="text-sm text-muted-foreground">Transcription</h3>
                 <div className="paragraph m-0">{message.transcription}</div>
-              </div>
+              </motion.div>
             )}
           </>
         )}
