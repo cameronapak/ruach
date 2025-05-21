@@ -4,6 +4,7 @@ import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from ".
 import { formatDistanceToNow } from "date-fns";
 import { JazzAccount } from "./schema";
 import { Button } from "./components/ui/button";
+import Delete from "./components/icons/popicons/Delete";
 
 export async function deleteMessage(messageId: string) {
   const { profile } = await JazzAccount.getMe().ensureLoaded({
@@ -54,7 +55,9 @@ export default function MyVoiceMessages() {
                     {msg.createdAt ? formatDistanceToNow(new Date(msg.createdAt), { addSuffix: true }) : "No date"}
                   </TableCell>
                   <TableCell>
-                    <Button variant="destructive" size="sm" onClick={async () => await deleteMessage(msg.id)}>Delete</Button>
+                    <Button variant="outline" size="icon" onClick={async () => confirm("Are you sure you want to delete this message?") && await deleteMessage(msg.id)}>
+                      <Delete className="w-4 h-4" />
+                    </Button>
                   </TableCell>
                 </TableRow>
               );

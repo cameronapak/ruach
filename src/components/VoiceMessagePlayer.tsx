@@ -48,7 +48,7 @@ const VoiceMessagePlayer: React.FC = () => {
   }, [message]);
 
   return (
-    <Card className="max-w-md w-full mx-auto">
+    <Card className="w-full mx-auto">
       <CardHeader>
         <CardTitle>Voice Message</CardTitle>
         <CardDescription>
