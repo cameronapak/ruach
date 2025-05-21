@@ -25,6 +25,7 @@ export class VoiceMessage extends CoMap {
   transcription = co.optional.string;
   expiresAt = co.optional.Date;
   listensLeft = co.optional.number;
+  title = co.optional.string;
   // Add more fields as needed (e.g., transcription, expiresAt, listensLeft)
 }
 

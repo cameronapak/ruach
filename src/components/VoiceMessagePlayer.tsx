@@ -17,6 +17,9 @@ import VoiceRecorder from "./VoiceRecorder";
 import { Button } from "./ui/button";
 import { createInviteLink } from "jazz-react";
 import Copy from "./icons/popicons/Copy";
+import { Pencil } from "lucide-react";
+import Edit from "./icons/popicons/Edit";
+import { Input } from "./ui/input";
 
 async function getTranscription(audioBlob: Blob) {
   const url = "https://cameronpak--787d50ae362e11f0b3249e149126039e.web.val.run";
@@ -42,6 +45,8 @@ const VoiceMessagePlayer: React.FC = () => {
   const [audioURL, setAudioURL] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [title, setTitle] = useState(message?.title || "");
 
   async function transcribeAudio() {
     if (!message?.audio) {
@@ -100,10 +105,57 @@ const VoiceMessagePlayer: React.FC = () => {
     }
   }, [message]);
 
+  const handleTitleSave = () => {
+    if (message && title.trim()) {
+      message.title = title.trim();
+      setIsEditing(false);
+    }
+  };
+
+  useEffect(() => {
+    if (message?.title) {
+      setTitle(message.title);
+    }
+  }, [message?.title]);
+
   return (
     <Card className="w-full mx-auto">
       <CardHeader>
-        <CardTitle>Voice Message</CardTitle>
+        <CardTitle className="flex items-center gap-2">
+          {isEditing ? (
+            <div className="flex items-center gap-2 w-full">
+              <Input
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className="flex-1"
+                placeholder="Untitled..."
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    handleTitleSave();
+                  }
+                }}
+              />
+              <Button variant="ghost" size="sm" onClick={handleTitleSave}>
+                Save
+              </Button>
+              <Button variant="ghost" size="sm" onClick={() => {
+                setTitle(message?.title || "");
+                setIsEditing(false);
+              }}>
+                Cancel
+              </Button>
+            </div>
+          ) : (
+            <>
+              {title ? title : <span className="text-muted-foreground">Untitled...</span>}
+              {me?.profile?.id === message?.creator?.id && (
+                <Button variant="ghost" size="icon" onClick={() => setIsEditing(true)}>
+                  <Edit className="w-5 h-5 text-muted-foreground" />
+                </Button>
+              )}
+            </>
+          )}
+        </CardTitle>
         <CardDescription>
           from {message?.creator?.firstName || "..."}
         </CardDescription>
@@ -123,7 +175,7 @@ const VoiceMessagePlayer: React.FC = () => {
         )}
         {!loading && !error && audioURL && (
           <>
-            <audio src={audioURL} controls className="w-full" />
+            <audio src={audioURL} controls className="w-full h-[54px]" />
             {error && (
               <Alert variant="destructive" className="w-full mt-2">
                 <AlertTitle>Error</AlertTitle>
@@ -143,7 +195,7 @@ const VoiceMessagePlayer: React.FC = () => {
         )}
       </CardContent>
       <CardFooter className="flex flex-col gap-4 items-stretch">
-        {me?.profile?.id === message?.creator?.id && (
+        {me?.profile?.id === message?.creator?.id ? (
           <Button
             variant="outline"
             onClick={async () => {
@@ -156,8 +208,10 @@ const VoiceMessagePlayer: React.FC = () => {
             <Copy className="w-4 h-4" />
             Share Invite Link
           </Button>
+        ) : (
+          <VoiceRecorder isResponse={true} chatID={id as ID<VoiceMessage>} />
         )}
-        <VoiceRecorder isResponse={true} chatID={id as ID<VoiceMessage>} />
+        
       </CardFooter>
     </Card>
   );
