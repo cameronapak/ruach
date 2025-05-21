@@ -16,6 +16,7 @@ import { Skeleton } from "./ui/skeleton";
 import VoiceRecorder from "./VoiceRecorder";
 import { Button } from "./ui/button";
 import { createInviteLink } from "jazz-react";
+import Copy from "./icons/popicons/Copy";
 
 const VoiceMessagePlayer: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -89,6 +90,7 @@ const VoiceMessagePlayer: React.FC = () => {
               alert("Invite link copied to clipboard!");
             }}
           >
+            <Copy className="w-4 h-4" />
             Share Invite Link
           </Button>
         )}
