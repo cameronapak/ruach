@@ -2,18 +2,11 @@ import React, { useState, useRef } from "react";
 import { ID, FileStream, Group } from "jazz-tools";
 import { VoiceMessage } from "../schema";
 import { useNavigate } from "react-router-dom";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-  CardFooter,
-} from "./ui/card";
 import { Button } from "./ui/button";
 import { Progress } from "./ui/progress";
 import { Alert, AlertTitle, AlertDescription } from "./ui/alert";
 import { Badge } from "./ui/badge";
-import { useAccount } from "jazz-react";
+import { useAccount, createInviteLink } from "jazz-react";
 
 type VoiceRecorderProps = {
   isResponse?: boolean;
@@ -33,6 +26,7 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
   const [progress, setProgress] = useState(0);
   const [messageId, setMessageId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [inviteLink, setInviteLink] = useState<string | null>(null);
   const audioChunks = useRef<Blob[]>([]);
   const navigate = useNavigate();
   const { me } = useAccount({ resolve: { profile: true } });
@@ -69,6 +63,7 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
     setMessageId(null);
     setProgress(0);
     setError(null);
+    setInviteLink(null);
   };
 
   const uploadVoiceMessage = async () => {
@@ -76,6 +71,7 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
     setUploading(true);
     setProgress(0);
     setError(null);
+    setInviteLink(null);
     if (!me?.profile) {
       setError("You must be logged in to create a voice message.");
       setUploading(false);
@@ -87,30 +83,32 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
       return;
     }
     try {
-      // Create a public group for this message
-      const publicGroup = Group.create();
-      publicGroup.addMember("everyone", "reader");
+      // Create a private group for this message (no 'everyone' access)
+      const privateGroup = Group.create();
 
       const response = await fetch(audioURL);
       const blob = await response.blob();
-      // FileStream owned by the public group
+      // FileStream owned by the private group
       const fileStream = await FileStream.createFromBlob(blob, {
-        owner: publicGroup,
+        owner: privateGroup,
         onProgress: (p: number) => setProgress(Math.round(p * 100)),
       });
       await fileStream.waitForSync();
-      // VoiceMessage owned by the public group
+      // VoiceMessage owned by the private group
       const message = VoiceMessage.create(
         {
           audio: fileStream,
           createdAt: new Date(),
           creator: me.profile,
         },
-        { owner: publicGroup }
+        { owner: privateGroup }
       );
       me.profile.messages.push(message);
-      navigate(`/message/${message.id}`);
+      // navigate(`/message/${message.id}`);
       setMessageId(message.id);
+      // Generate invite link for sharing (reader access)
+      const link = createInviteLink(message, "reader");
+      setInviteLink(link);
     } catch (err) {
       setError("Upload failed. Please try again.");
     } finally {
@@ -209,13 +207,18 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
         <div className="flex flex-col gap-2 items-center mt-2">
           <Badge variant="secondary">Voice message uploaded!</Badge>
           <div className="text-xs break-all">
-            Shareable link:{" "}
-            <a
-              href={`/message/${messageId}`}
-              className="underline text-primary"
-            >
-              {window.location.origin}/message/{messageId}
-            </a>
+            Shareable link: {inviteLink ? (
+              <a
+                href={inviteLink}
+                className="underline text-primary"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {inviteLink}
+              </a>
+            ) : (
+              <span>Generating invite link...</span>
+            )}
           </div>
         </div>
       )}

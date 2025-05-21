@@ -8,9 +8,13 @@ import {
   Route,
   Link,
   useLocation,
+  useNavigate,
+  useParams,
 } from "react-router-dom";
 import MyVoiceMessages from "./MyVoiceMessages";
 import { Button } from "./components/ui/button.tsx";
+import { useAcceptInvite } from "jazz-react";
+import { VoiceMessage } from "./schema";
 
 function Header() {
   const location = useLocation();
@@ -37,10 +41,29 @@ function Header() {
   );
 }
 
+function InvitePage() {
+  return <p>Accepting invite...</p>;
+}
+
+function InviteHandler() {
+  const navigate = useNavigate();
+
+  useAcceptInvite({
+    invitedObjectSchema: VoiceMessage,
+    onAccept: (messageId) => {
+      console.log("messageId", messageId);
+      navigate(`/message/${messageId}`);
+    },
+  });
+
+  return null;
+}
+
 function App() {
   return (
     <BrowserRouter>
       <Header />
+      <InviteHandler />
       <main className="container max-w-lg mx-auto py-12 flex flex-col gap-8">
         <Routes>
           <Route
@@ -54,6 +77,7 @@ function App() {
           />
           <Route path="/account" element={<Form />} />
           <Route path="/message/:id" element={<VoiceMessagePlayer />} />
+          <Route path="/invite/*" element={<InvitePage />} />
         </Routes>
       </main>
     </BrowserRouter>
