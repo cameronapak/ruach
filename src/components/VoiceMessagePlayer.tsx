@@ -55,7 +55,7 @@ const VoiceMessagePlayer: React.FC = () => {
       <CardHeader>
         <CardTitle>Voice Message</CardTitle>
         <CardDescription>
-          from {message?.creator?.firstName || "Anonymous"}
+          from {message?.creator?.firstName || "..."}
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col items-center gap-4">
