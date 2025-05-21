@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { useCoState, useAccount } from "jazz-react";
 import { VoiceMessage } from "../schema";
 import { ID } from "jazz-tools";
+import { motion } from "motion/react";
 import {
   Card,
   CardHeader,
@@ -17,19 +18,19 @@ import VoiceRecorder from "./VoiceRecorder";
 import { Button } from "./ui/button";
 import { createInviteLink } from "jazz-react";
 import Copy from "./icons/popicons/Copy";
-import { Pencil } from "lucide-react";
 import Edit from "./icons/popicons/Edit";
 import { Input } from "./ui/input";
 
 async function getTranscription(audioBlob: Blob) {
-  const url = "https://cameronpak--787d50ae362e11f0b3249e149126039e.web.val.run";
+  const url =
+    "https://cameronpak--787d50ae362e11f0b3249e149126039e.web.val.run";
   const endpoint = `${url}/ai/transcribe`;
-  
+
   const formData = new FormData();
-  formData.append('file', audioBlob, "audio.webm");
+  formData.append("file", audioBlob, "audio.webm");
   const result = await fetch(endpoint, {
     method: "POST",
-    body: formData
+    body: formData,
   });
 
   // Try to extract text from result
@@ -39,9 +40,11 @@ async function getTranscription(audioBlob: Blob) {
 
 const VoiceMessagePlayer: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const message = useCoState(VoiceMessage, id as ID<VoiceMessage>, { resolve: { audio: true } });
+  const message = useCoState(VoiceMessage, id as ID<VoiceMessage>, {
+    resolve: { audio: true },
+  });
   const { me } = useAccount({ resolve: { profile: true } });
-
+  const isLoadingUser = Boolean(!me || !me?.profile);
   const [audioURL, setAudioURL] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -85,7 +88,9 @@ const VoiceMessagePlayer: React.FC = () => {
         }
 
         if (blob) {
-          const file = new File([blob], "audio.webm", { type: blob.type || "audio/webm" });
+          const file = new File([blob], "audio.webm", {
+            type: blob.type || "audio/webm",
+          });
           setAudioURL(URL.createObjectURL(file));
         } else {
           setError("Failed to load audio.");
@@ -130,7 +135,7 @@ const VoiceMessagePlayer: React.FC = () => {
                 className="flex-1"
                 placeholder="Untitled..."
                 onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
+                  if (e.key === "Enter") {
                     handleTitleSave();
                   }
                 }}
@@ -138,18 +143,30 @@ const VoiceMessagePlayer: React.FC = () => {
               <Button variant="ghost" size="sm" onClick={handleTitleSave}>
                 Save
               </Button>
-              <Button variant="ghost" size="sm" onClick={() => {
-                setTitle(message?.title || "");
-                setIsEditing(false);
-              }}>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setTitle(message?.title || "");
+                  setIsEditing(false);
+                }}
+              >
                 Cancel
               </Button>
             </div>
           ) : (
             <>
-              {title ? title : <span className="text-muted-foreground">Untitled...</span>}
+              {title ? (
+                title
+              ) : (
+                <span className="text-muted-foreground">Untitled...</span>
+              )}
               {me?.profile?.id === message?.creator?.id && (
-                <Button variant="ghost" size="icon" onClick={() => setIsEditing(true)}>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setIsEditing(true)}
+                >
                   <Edit className="w-5 h-5 text-muted-foreground" />
                 </Button>
               )}
@@ -164,7 +181,9 @@ const VoiceMessagePlayer: React.FC = () => {
         {loading && (
           <div className="w-full flex flex-col items-center gap-2">
             <Skeleton className="w-full h-12" />
-            <div className="text-muted-foreground text-xs">Loading voice message...</div>
+            <div className="text-muted-foreground text-xs">
+              Loading voice message...
+            </div>
           </div>
         )}
         {error && (
@@ -195,26 +214,38 @@ const VoiceMessagePlayer: React.FC = () => {
         )}
       </CardContent>
       <CardFooter className="flex flex-col gap-4 items-stretch">
-        {me?.profile?.id === message?.creator?.id ? (
-          <Button
-            variant="outline"
-            onClick={async () => {
-              if (!message) return;
-              const inviteLink = createInviteLink(message, "reader");
-              await navigator.clipboard.writeText(inviteLink);
-              alert("Invite link copied to clipboard!");
-            }}
+        {!isLoadingUser ? (
+          <motion.div 
+            className="w-full flex flex-col items-center gap-2"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
           >
-            <Copy className="w-4 h-4" />
-            Share Invite Link
-          </Button>
-        ) : (
-          <VoiceRecorder isResponse={true} chatID={id as ID<VoiceMessage>} />
-        )}
-        
+            {me?.profile?.id === message?.creator?.id ? (
+              <Button
+                variant="outline"
+                onClick={async () => {
+                  if (!message) return;
+                  const inviteLink = createInviteLink(message, "reader");
+                  await navigator.clipboard.writeText(inviteLink);
+                  alert("Invite link copied to clipboard!");
+                }}
+              >
+                <Copy className="w-4 h-4" />
+                Share Invite Link
+              </Button>
+            ) : (
+              <VoiceRecorder
+                isResponse={true}
+                chatID={id as ID<VoiceMessage>}
+              />
+            )}
+          </motion.div>
+        ) : null}
       </CardFooter>
     </Card>
   );
 };
 
-export default VoiceMessagePlayer; 
+export default VoiceMessagePlayer;
