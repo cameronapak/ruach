@@ -6,7 +6,7 @@ import { JazzAccount } from "./schema";
 import { Button } from "./components/ui/button";
 import Delete from "./components/icons/popicons/Delete";
 
-export async function deleteMessage(messageId: string) {
+async function deleteMessage(messageId: string) {
   const { profile } = await JazzAccount.getMe().ensureLoaded({
     resolve: {
       profile: {
