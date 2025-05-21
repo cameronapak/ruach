@@ -64,7 +64,6 @@ export default function MyVoiceMessages() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Title</TableHead>
-                  <TableHead>Date</TableHead>
                   <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -73,20 +72,27 @@ export default function MyVoiceMessages() {
                   if (!msg) return null;
                   return (
                     <TableRow key={msg.id}>
-                      <TableCell>
-                        <Link
-                          to={`/message/${msg.id}`}
-                          className="font-medium hover:underline"
-                        >
-                          {msg.title || "Untitled"}
-                        </Link>
-                      </TableCell>
-                      <TableCell className="text-xs text-muted-foreground">
-                        {msg.createdAt
-                          ? formatDistanceToNow(new Date(msg.createdAt), {
-                              addSuffix: true,
-                            })
-                          : "No date"}
+                      <TableCell className="whitespace-normal align-top">
+                        <div className="flex flex-col gap-1">
+                          <p className="text-xs text-muted-foreground">
+                            {msg.createdAt
+                              ? formatDistanceToNow(new Date(msg.createdAt), {
+                                  addSuffix: true,
+                                })
+                              : "No date"}
+                          </p>
+                          <Link
+                            to={`/message/${msg.id}`}
+                            className="font-medium hover:underline"
+                          >
+                            {msg.title || "Untitled"}
+                          </Link>
+                          {msg.transcription && (
+                            <p className="text-xs text-muted-foreground break-words">
+                              {msg.transcription}
+                            </p>
+                          )}
+                        </div>
                       </TableCell>
                       <TableCell>
                         <Button
