@@ -77,7 +77,7 @@ const VoiceMessagePlayer: React.FC = () => {
           <div className="text-muted-foreground">No audio available.</div>
         )}
       </CardContent>
-      <CardFooter className="flex flex-col gap-2 items-stretch">
+      <CardFooter className="flex flex-col gap-4 items-stretch">
         <Button
           variant="outline"
           onClick={async () => {

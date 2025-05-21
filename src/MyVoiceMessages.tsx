@@ -28,7 +28,9 @@ export default function MyVoiceMessages() {
   return (
     <section className="w-full mx-auto">
       {messages.length === 0 ? (
-        <div>You haven't created any voice messages yet.</div>
+        <p className="text-center text-muted-foreground">
+          Record your first voice message 👆
+        </p>
       ) : (
         <Table>
           <TableHeader>
