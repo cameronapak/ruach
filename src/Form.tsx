@@ -15,7 +15,7 @@ export function Form() {
   if (!me) return null;
 
   return (
-    <Card className="max-w-md w-full mx-auto">
+    <Card className="w-full mx-auto">
       <CardHeader>
         <CardTitle>Profile</CardTitle>
       </CardHeader>
