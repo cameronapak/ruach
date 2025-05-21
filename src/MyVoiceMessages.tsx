@@ -50,7 +50,7 @@ export default function MyVoiceMessages() {
                       to={`/message/${msg.id}`}
                       className="font-medium hover:underline"
                     >
-                      Voice Message
+                      {msg.title || "Untitled"}
                     </Link>
                   </TableCell>
                   <TableCell className="text-xs text-muted-foreground">
