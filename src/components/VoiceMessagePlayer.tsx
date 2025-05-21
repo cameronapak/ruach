@@ -94,6 +94,12 @@ const VoiceMessagePlayer: React.FC = () => {
     if (message) fetchAudio();
   }, [message]);
 
+  React.useEffect(() => {
+    if (message && !message.transcription) {
+      transcribeAudio();
+    }
+  }, [message]);
+
   return (
     <Card className="w-full mx-auto">
       <CardHeader>
