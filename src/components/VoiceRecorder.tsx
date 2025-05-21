@@ -105,13 +105,7 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({
         { owner: privateGroup }
       );
       me.profile.messages.push(message);
-      // navigate(`/message/${message.id}`);
-      setMessageId(message.id);
-      // Generate invite link for sharing (reader access)
-      const inviteLink = createInviteLink(message, "reader");
-      await navigator.clipboard.writeText(inviteLink);
-      alert("Invite link copied to clipboard!");
-      setInviteLink(inviteLink);
+      navigate(`/message/${message.id}`);
     } catch (err) {
       setError("Upload failed. Please try again.");
     } finally {
