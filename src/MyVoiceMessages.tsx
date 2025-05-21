@@ -39,6 +39,11 @@ export default function MyVoiceMessages() {
   });
   const isLoading = Boolean(!me || !me?.profile);
   const messages = (me?.profile?.messages || []).filter(Boolean);
+  // sort messages by createdAt
+  messages.sort((a, b) => {
+    if (!a || !b) return 0;
+    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+  });
 
   return (
     <section className="w-full mx-auto">
