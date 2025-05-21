@@ -51,6 +51,7 @@
     "jazz-react": "^0.13.30",
     "jazz-tools": "^0.13.30",
     "lucide-react": "^0.510.0",
+    "motion": "^12.12.1",
     "next-themes": "^0.4.6",
     "react": "18.3.1",
     "react-day-picker": "^8.10.1",
