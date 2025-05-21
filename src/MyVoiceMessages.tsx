@@ -88,7 +88,7 @@ export default function MyVoiceMessages() {
                             {msg.title || "Untitled"}
                           </Link>
                           {msg.transcription && (
-                            <p className="text-xs text-muted-foreground break-words">
+                            <p className="text-xs text-muted-foreground break-words line-clamp-4">
                               {msg.transcription}
                             </p>
                           )}
