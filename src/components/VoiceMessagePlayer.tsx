@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { useCoState } from "jazz-react";
+import { useCoState, useAccount } from "jazz-react";
 import { VoiceMessage } from "../schema";
 import { ID } from "jazz-tools";
 import {
@@ -20,6 +20,7 @@ import { createInviteLink } from "jazz-react";
 const VoiceMessagePlayer: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const message = useCoState(VoiceMessage, id as ID<VoiceMessage>, { resolve: { audio: true } });
+  const { me } = useAccount({ resolve: { profile: true } });
 
   const [audioURL, setAudioURL] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -78,17 +79,19 @@ const VoiceMessagePlayer: React.FC = () => {
         )}
       </CardContent>
       <CardFooter className="flex flex-col gap-4 items-stretch">
-        <Button
-          variant="outline"
-          onClick={async () => {
-            if (!message) return;
-            const inviteLink = createInviteLink(message, "reader");
-            await navigator.clipboard.writeText(inviteLink);
-            alert("Invite link copied to clipboard!");
-          }}
-        >
-          Share Invite Link
-        </Button>
+        {me?.profile?.id === message?.creator?.id && (
+          <Button
+            variant="outline"
+            onClick={async () => {
+              if (!message) return;
+              const inviteLink = createInviteLink(message, "reader");
+              await navigator.clipboard.writeText(inviteLink);
+              alert("Invite link copied to clipboard!");
+            }}
+          >
+            Share Invite Link
+          </Button>
+        )}
         <VoiceRecorder isResponse={true} chatID={id as ID<VoiceMessage>} />
       </CardFooter>
     </Card>
