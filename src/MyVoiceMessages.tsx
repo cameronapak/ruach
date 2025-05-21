@@ -61,17 +61,17 @@ export default function MyVoiceMessages() {
             transition={{ duration: 0.5 }}
           >
             <Table>
-              <TableHeader>
+              {/* <TableHeader>
                 <TableRow>
                   <TableHead>Title</TableHead>
                   <TableHead>Actions</TableHead>
                 </TableRow>
-              </TableHeader>
+              </TableHeader> */}
               <TableBody>
                 {messages.map((msg) => {
                   if (!msg) return null;
                   return (
-                    <TableRow key={msg.id}>
+                    <TableRow className="group" key={msg.id}>
                       <TableCell className="whitespace-normal align-top">
                         <div className="flex flex-col gap-1">
                           <p className="text-xs text-muted-foreground">
@@ -88,7 +88,7 @@ export default function MyVoiceMessages() {
                             {msg.title || "Untitled"}
                           </Link>
                           {msg.transcription && (
-                            <p className="text-xs text-muted-foreground break-words line-clamp-4">
+                            <p className="text-sm text-muted-foreground break-words line-clamp-4">
                               {msg.transcription}
                             </p>
                           )}
@@ -96,6 +96,7 @@ export default function MyVoiceMessages() {
                       </TableCell>
                       <TableCell>
                         <Button
+                          className="opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                           variant="outline"
                           size="icon"
                           onClick={async () =>
