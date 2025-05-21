@@ -9,7 +9,7 @@ import {
   TableCell,
 } from "./components/ui/table";
 import { formatDistanceToNow } from "date-fns";
-import { motion } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import { JazzAccount } from "./schema";
 import { Button } from "./components/ui/button";
 import Delete from "./components/icons/popicons/Delete";
@@ -47,60 +47,62 @@ export default function MyVoiceMessages() {
           Record your first voice message 👆
         </p>
       ) : (
-        <motion.div 
-          className="w-full flex flex-col items-center gap-2"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Title</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {messages.map((msg) => {
-                if (!msg) return null;
-                return (
-                  <TableRow key={msg.id}>
-                    <TableCell>
-                      <Link
-                        to={`/message/${msg.id}`}
-                        className="font-medium hover:underline"
-                      >
-                        {msg.title || "Untitled"}
-                      </Link>
-                    </TableCell>
-                    <TableCell className="text-xs text-muted-foreground">
-                      {msg.createdAt
-                        ? formatDistanceToNow(new Date(msg.createdAt), {
-                            addSuffix: true,
-                          })
-                        : "No date"}
-                    </TableCell>
-                    <TableCell>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={async () =>
-                          confirm(
-                            "Are you sure you want to delete this message?"
-                          ) && (await deleteMessage(msg.id))
-                        }
-                      >
-                        <Delete className="w-4 h-4" />
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
-        </motion.div>
+        <AnimatePresence>
+          <motion.div
+            className="w-full flex flex-col items-center gap-2"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Title</TableHead>
+                  <TableHead>Date</TableHead>
+                  <TableHead>Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {messages.map((msg) => {
+                  if (!msg) return null;
+                  return (
+                    <TableRow key={msg.id}>
+                      <TableCell>
+                        <Link
+                          to={`/message/${msg.id}`}
+                          className="font-medium hover:underline"
+                        >
+                          {msg.title || "Untitled"}
+                        </Link>
+                      </TableCell>
+                      <TableCell className="text-xs text-muted-foreground">
+                        {msg.createdAt
+                          ? formatDistanceToNow(new Date(msg.createdAt), {
+                              addSuffix: true,
+                            })
+                          : "No date"}
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          onClick={async () =>
+                            confirm(
+                              "Are you sure you want to delete this message?"
+                            ) && (await deleteMessage(msg.id))
+                          }
+                        >
+                          <Delete className="w-4 h-4" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </motion.div>
+        </AnimatePresence>
       )}
     </section>
   );

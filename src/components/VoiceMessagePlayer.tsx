@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { useCoState, useAccount } from "jazz-react";
 import { VoiceMessage } from "../schema";
 import { ID } from "jazz-tools";
-import { motion } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import {
   Card,
   CardHeader,
@@ -202,16 +202,20 @@ const VoiceMessagePlayer: React.FC = () => {
               </Alert>
             )}
             {message?.transcription && (
-              <motion.div 
-                className="w-full mt-2 p-4 border rounded-sm bg-secondary overflow-hidden"
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.3, ease: "easeInOut" }}
-              >
-                <h3 className="text-sm text-muted-foreground">Transcription</h3>
-                <div className="paragraph m-0">{message.transcription}</div>
-              </motion.div>
+              <AnimatePresence>
+                <motion.div
+                  className="w-full mt-2 p-4 border rounded-sm bg-secondary overflow-hidden"
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.3, ease: "easeInOut" }}
+                >
+                  <h3 className="text-sm text-muted-foreground">
+                    Transcription
+                  </h3>
+                  <div className="paragraph m-0">{message.transcription}</div>
+                </motion.div>
+              </AnimatePresence>
             )}
           </>
         )}
@@ -221,33 +225,35 @@ const VoiceMessagePlayer: React.FC = () => {
       </CardContent>
       <CardFooter className="flex flex-col gap-4 items-stretch">
         {!isLoadingUser ? (
-          <motion.div 
-            className="w-full flex flex-col items-center gap-2"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            {me?.profile?.id === message?.creator?.id ? (
-              <Button
-                variant="outline"
-                onClick={async () => {
-                  if (!message) return;
-                  const inviteLink = createInviteLink(message, "reader");
-                  await navigator.clipboard.writeText(inviteLink);
-                  alert("Invite link copied to clipboard!");
-                }}
-              >
-                <Copy className="w-4 h-4" />
-                Share Invite Link
-              </Button>
-            ) : (
-              <VoiceRecorder
-                isResponse={true}
-                chatID={id as ID<VoiceMessage>}
-              />
-            )}
-          </motion.div>
+          <AnimatePresence>
+            <motion.div
+              className="w-full flex flex-col items-center gap-2"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              {me?.profile?.id === message?.creator?.id ? (
+                <Button
+                  variant="outline"
+                  onClick={async () => {
+                    if (!message) return;
+                    const inviteLink = createInviteLink(message, "reader");
+                    await navigator.clipboard.writeText(inviteLink);
+                    alert("Invite link copied to clipboard!");
+                  }}
+                >
+                  <Copy className="w-4 h-4" />
+                  Share Invite Link
+                </Button>
+              ) : (
+                <VoiceRecorder
+                  isResponse={true}
+                  chatID={id as ID<VoiceMessage>}
+                />
+              )}
+            </motion.div>
+          </AnimatePresence>
         ) : null}
       </CardFooter>
     </Card>
