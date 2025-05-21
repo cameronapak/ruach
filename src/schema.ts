@@ -22,6 +22,9 @@ export class VoiceMessage extends CoMap {
   audio = co.ref(FileStream);
   createdAt = co.Date;
   creator = co.ref(JazzProfile);
+  transcription = co.optional.string;
+  expiresAt = co.optional.Date;
+  listensLeft = co.optional.number;
   // Add more fields as needed (e.g., transcription, expiresAt, listensLeft)
 }
 

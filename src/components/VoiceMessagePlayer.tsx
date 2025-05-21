@@ -18,6 +18,22 @@ import { Button } from "./ui/button";
 import { createInviteLink } from "jazz-react";
 import Copy from "./icons/popicons/Copy";
 
+async function getTranscription(audioBlob: Blob) {
+  const url = "https://cameronpak--787d50ae362e11f0b3249e149126039e.web.val.run";
+  const endpoint = `${url}/ai/transcribe`;
+  
+  const formData = new FormData();
+  formData.append('file', audioBlob, "audio.webm");
+  const result = await fetch(endpoint, {
+    method: "POST",
+    body: formData
+  });
+
+  // Try to extract text from result
+  const data = await result.json();
+  return data.response;
+}
+
 const VoiceMessagePlayer: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const message = useCoState(VoiceMessage, id as ID<VoiceMessage>, { resolve: { audio: true } });
@@ -26,6 +42,26 @@ const VoiceMessagePlayer: React.FC = () => {
   const [audioURL, setAudioURL] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  async function transcribeAudio() {
+    if (!message?.audio) {
+      setError("Audio not found.");
+      setLoading(false);
+      return;
+    }
+
+    const blob = await message.audio.toBlob();
+    if (!blob) {
+      setError("Failed to load audio.");
+      setLoading(false);
+      return;
+    }
+
+    const transcription = await getTranscription(blob);
+    if (transcription.trim()) {
+      message.transcription = transcription.trim();
+    }
+  }
 
   useEffect(() => {
     const fetchAudio = async () => {
@@ -37,8 +73,15 @@ const VoiceMessagePlayer: React.FC = () => {
 
       try {
         const blob = await message.audio.toBlob();
+        if (!blob) {
+          setError("Failed to load audio.");
+          setLoading(false);
+          return;
+        }
+
         if (blob) {
-          setAudioURL(URL.createObjectURL(blob));
+          const file = new File([blob], "audio.webm", { type: blob.type || "audio/webm" });
+          setAudioURL(URL.createObjectURL(file));
         } else {
           setError("Failed to load audio.");
         }
@@ -73,7 +116,21 @@ const VoiceMessagePlayer: React.FC = () => {
           </Alert>
         )}
         {!loading && !error && audioURL && (
-          <audio src={audioURL} controls className="w-full" />
+          <>
+            <audio src={audioURL} controls className="w-full" />
+            {error && (
+              <Alert variant="destructive" className="w-full mt-2">
+                <AlertTitle>Error</AlertTitle>
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
+            {message?.transcription && (
+              <div className="w-full mt-2 p-4 border rounded-sm bg-secondary">
+                <h3 className="text-sm text-muted-foreground">Transcription</h3>
+                <div className="paragraph m-0">{message.transcription}</div>
+              </div>
+            )}
+          </>
         )}
         {!loading && !error && !audioURL && (
           <div className="text-muted-foreground">No audio available.</div>
