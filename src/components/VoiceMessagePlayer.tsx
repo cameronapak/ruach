@@ -14,6 +14,8 @@ import {
 import { Alert, AlertTitle, AlertDescription } from "./ui/alert";
 import { Skeleton } from "./ui/skeleton";
 import VoiceRecorder from "./VoiceRecorder";
+import { Button } from "./ui/button";
+import { createInviteLink } from "jazz-react";
 
 const VoiceMessagePlayer: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -75,7 +77,18 @@ const VoiceMessagePlayer: React.FC = () => {
           <div className="text-muted-foreground">No audio available.</div>
         )}
       </CardContent>
-      <CardFooter>
+      <CardFooter className="flex flex-col gap-2 items-stretch">
+        <Button
+          variant="outline"
+          onClick={async () => {
+            if (!message) return;
+            const inviteLink = createInviteLink(message, "reader");
+            await navigator.clipboard.writeText(inviteLink);
+            alert("Invite link copied to clipboard!");
+          }}
+        >
+          Share Invite Link
+        </Button>
         <VoiceRecorder isResponse={true} chatID={id as ID<VoiceMessage>} />
       </CardFooter>
     </Card>
