@@ -2,6 +2,24 @@ import { useAccount } from "jazz-react";
 import { Link } from "react-router-dom";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "./components/ui/table";
 import { formatDistanceToNow } from "date-fns";
+import { JazzAccount } from "./schema";
+import { Button } from "./components/ui/button";
+
+export async function deleteMessage(messageId: string) {
+  const { profile } = await JazzAccount.getMe().ensureLoaded({
+    resolve: {
+      profile: {
+        messages: true,
+      },
+    },
+  });
+
+  const index = profile.messages.findIndex((p) => p?.id === messageId);
+  if (index > -1) {
+    profile.messages.splice(index, 1);
+  }
+}
+
 export default function MyVoiceMessages() {
   const { me } = useAccount({ resolve: { profile: { messages: true } } });
   const messages = (me?.profile?.messages || []).filter(Boolean);
@@ -16,6 +34,7 @@ export default function MyVoiceMessages() {
             <TableRow>
               <TableHead>Title</TableHead>
               <TableHead>Date</TableHead>
+              <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -33,6 +52,9 @@ export default function MyVoiceMessages() {
                   </TableCell>
                   <TableCell className="text-xs text-muted-foreground">
                     {msg.createdAt ? formatDistanceToNow(new Date(msg.createdAt), { addSuffix: true }) : "No date"}
+                  </TableCell>
+                  <TableCell>
+                    <Button variant="destructive" size="sm" onClick={async () => await deleteMessage(msg.id)}>Delete</Button>
                   </TableCell>
                 </TableRow>
               );

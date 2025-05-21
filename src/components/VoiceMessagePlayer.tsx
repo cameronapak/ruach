@@ -18,6 +18,7 @@ import VoiceRecorder from "./VoiceRecorder";
 const VoiceMessagePlayer: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const message = useCoState(VoiceMessage, id as ID<VoiceMessage>, { resolve: { audio: true } });
+
   const [audioURL, setAudioURL] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -29,6 +30,7 @@ const VoiceMessagePlayer: React.FC = () => {
         setLoading(false);
         return;
       }
+
       try {
         const blob = await message.audio.toBlob();
         if (blob) {
